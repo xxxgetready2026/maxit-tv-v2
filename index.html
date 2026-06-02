@@ -8,15 +8,38 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
+  :root{
+    /* ── Colors ── */
+    --bg-primary:#000000;--bg-card:#1a1a1a;--bg-elevated:#111111;--bg-interactive:#2a2a2a;--bg-nav:#0d0d0d;
+    --accent:#FF6B00;--badge-live:#FF6B00;--progress-content:#FF6B00;
+    --text-primary:#FFFFFF;--text-secondary:#888888;--text-tertiary:#555555;
+    --separator:#1e1e1e;--border-default:#333333;
+    --progress-live:#FF4444;--success:#4CAF50;--bg-success:#1a4a1a;
+    /* ── Typography ── */
+    --font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;
+    --text-size-title-screen:24px;--text-weight-title-screen:700;
+    --text-size-title-section:18px;--text-weight-title-section:700;
+    --text-size-card-title:13px;--text-weight-card-title:500;
+    --text-size-card-subtitle:11px;--text-weight-card-subtitle:400;
+    --text-size-nav-label:11px;--text-weight-nav-label:500;
+    --text-size-pill:13px;--text-weight-pill:500;
+    --text-size-body:14px;--text-weight-body:400;
+    --text-size-caption:11px;--text-weight-caption:400;
+    /* ── Spacing ── */
+    --padding-horizontal:16px;--gap-cards:10px;--gap-sections:28px;
+    /* ── Border radius ── */
+    --radius-card:8px;--radius-pill:20px;--radius-partner-card:12px;
+    --radius-sheet:20px 20px 0 0;--radius-button:12px;--radius-nav:16px 16px 0 0;--radius-avatar:50%;
+  }
   *{margin:0;padding:0;box-sizing:border-box}
   ::-webkit-scrollbar{display:none}
   *{scrollbar-width:none;-ms-overflow-style:none}
-  body{background:#0d0d1f;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:-apple-system,"SF Pro Display",BlinkMacSystemFont,"Segoe UI",sans-serif}
-  .phone{width:375px;height:812px;background:#000;border-radius:44px;overflow:hidden;position:relative;flex-shrink:0;box-shadow:0 0 0 1px #555,0 0 0 4px #222,0 40px 100px rgba(0,0,0,.7);transition:width .45s cubic-bezier(.4,0,.2,1),height .45s cubic-bezier(.4,0,.2,1),border-radius .45s}
+  body{background:#0d0d1f;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:var(--font-family)}
+  .phone{width:375px;height:812px;background:var(--bg-primary);border-radius:44px;overflow:hidden;position:relative;flex-shrink:0;box-shadow:0 0 0 1px #555,0 0 0 4px #222,0 40px 100px rgba(0,0,0,.7);transition:width .45s cubic-bezier(.4,0,.2,1),height .45s cubic-bezier(.4,0,.2,1),border-radius .45s}
   .phone.landscape{width:812px;height:375px;border-radius:32px}
   .phone.fullscreen{position:fixed !important;top:0 !important;left:0 !important;width:100vw !important;height:100vh !important;border-radius:0 !important;box-shadow:none !important;z-index:9999}
   .qr-panel{margin-top:20px;background:#fff;border-radius:12px;padding:12px;text-align:center;font-size:11px;color:#333}
-  @media(max-width:430px){body{background:#000;justify-content:flex-start}.phone{width:100vw;height:100dvh;border-radius:0;box-shadow:none}.qr-panel{display:none}}
+  @media(max-width:430px){body{background:var(--bg-primary);justify-content:flex-start}.phone{width:100vw;height:100dvh;border-radius:0;box-shadow:none}.qr-panel{display:none}}
   @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
   @keyframes slideDown{from{transform:translateY(-60px);opacity:0}to{transform:translateY(0);opacity:1}}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -1265,65 +1288,63 @@ const LaunchScreen = ({onSelectLang, fading}) => {
   };
   return (
     <div style={{
-      position:'fixed',inset:0,background:'#0d0d1f',
+      position:'fixed',inset:0,background:'var(--bg-primary)',
       display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
       zIndex:9999,opacity:fading?0:1,transition:'opacity .3s ease-out',
       pointerEvents:fading?'none':'auto',padding:'32px 20px',overflowY:'auto'
     }}>
       {/* Logo */}
       <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:10}}>
-        <div style={{background:'#FF6B00',borderRadius:10,width:48,height:34,display:'flex',alignItems:'center',justifyContent:'center'}}>
-          <svg width="14" height="18" viewBox="0 0 10 12" fill="white"><polygon points="0,0 10,6 0,12"/></svg>
+        <div style={{background:'var(--accent)',borderRadius:10,width:68,height:48,display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <svg width="16" height="22" viewBox="0 0 10 12" fill="white"><polygon points="0,0 10,6 0,12"/></svg>
         </div>
-        <span style={{fontSize:30,fontWeight:800,color:'#fff',letterSpacing:-.5}}>Max it TV</span>
+        <span style={{fontSize:28,fontWeight:700,color:'var(--text-primary)',letterSpacing:-.5}}>Max it TV</span>
       </div>
-      <div style={{fontSize:13,color:'#666',marginBottom:40,textAlign:'center',lineHeight:1.5}}>
-        Simulation expérience mobile · Version démo
+      <div style={{fontSize:14,color:'var(--text-secondary)',marginBottom:40,textAlign:'center',lineHeight:1.5}}>
+        {t('launch_subtitle')}
       </div>
 
-      {/* Guide download */}
-      <a href="maxit_tv_guide_demo.html" target="_blank" rel="noopener" style={{
+      {/* Guide button */}
+      <a href="/guide" target="_blank" rel="noopener" style={{
         display:'block',width:'100%',maxWidth:340,
-        padding:'14px',borderRadius:14,border:'1.5px solid #2a2a2a',
-        background:'#141414',color:'#ccc',fontSize:14,fontWeight:600,
-        textAlign:'center',textDecoration:'none',marginBottom:36,
-        letterSpacing:.2
-      }}>📋 Guide des cas à tester</a>
+        padding:'14px',borderRadius:'var(--radius-button)',border:'1.5px solid var(--border-default)',
+        background:'var(--bg-card)',color:'var(--text-primary)',fontSize:14,fontWeight:600,
+        textAlign:'center',textDecoration:'none',marginBottom:36,letterSpacing:.2
+      }}>📋 {t('launch_guide')}</a>
 
       {/* Language selector */}
       <div style={{marginBottom:36,textAlign:'center',width:'100%',maxWidth:340}}>
-        <div style={{fontSize:11,color:'#555',marginBottom:14,textTransform:'uppercase',letterSpacing:1.2}}>Choisir la langue · Choose language</div>
-        <div style={{display:'flex',gap:12,justifyContent:'center'}}>
+        <div style={{fontSize:11,color:'var(--text-tertiary)',marginBottom:14,textTransform:'uppercase',letterSpacing:1.2}}>{t('launch_lang_hint')}</div>
+        <div style={{display:'flex',gap:10,justifyContent:'center'}}>
           {[{l:'fr',label:'🇫🇷  Français',primary:true},{l:'en',label:'🇬🇧  English',primary:false}].map(({l,label,primary})=>(
             <button key={l} onClick={()=>onSelectLang(l)} style={{
-              flex:1,padding:'14px 0',borderRadius:24,fontSize:15,fontWeight:700,
-              cursor:'pointer',border:'2px solid',
-              background:primary?'#FF6B00':'transparent',
-              color:'#fff',borderColor:primary?'#FF6B00':'#555',
-              transition:'all .15s'
+              flex:1,padding:'14px 0',borderRadius:'var(--radius-button)',fontSize:14,fontWeight:700,
+              cursor:'pointer',border:`1.5px solid ${primary?'var(--accent)':'var(--border-default)'}`,
+              background:primary?'var(--accent)':'var(--bg-card)',
+              color:'var(--text-primary)',transition:'all .15s'
             }}>{label}</button>
           ))}
         </div>
       </div>
 
       {/* Share section */}
-      <div style={{width:'100%',maxWidth:340,background:'#111',borderRadius:14,padding:'14px 16px',marginBottom:20}}>
-        <div style={{fontSize:11,color:'#555',marginBottom:8,textTransform:'uppercase',letterSpacing:.8}}>Partager le lien</div>
+      <div style={{width:'100%',maxWidth:340,background:'var(--bg-elevated)',borderRadius:'var(--radius-button)',padding:'14px 16px',marginBottom:20}}>
+        <div style={{fontSize:11,color:'var(--text-tertiary)',marginBottom:8,textTransform:'uppercase',letterSpacing:.8}}>{t('launch_share')}</div>
         <div style={{display:'flex',gap:8,alignItems:'center'}}>
-          <div style={{flex:1,background:'#1a1a1a',borderRadius:8,padding:'9px 12px',fontSize:11,color:'#888',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{VERCEL_URL}</div>
+          <div style={{flex:1,background:'var(--bg-card)',borderRadius:'var(--radius-card)',padding:'9px 12px',fontSize:11,color:'var(--text-secondary)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{VERCEL_URL}</div>
           <button onClick={copy} style={{
-            flexShrink:0,padding:'9px 14px',borderRadius:8,border:'none',
-            background:copied?'#00C851':'#FF6B00',color:'#fff',fontSize:12,fontWeight:700,
+            flexShrink:0,padding:'9px 14px',borderRadius:'var(--radius-card)',border:'none',
+            background:copied?'var(--success)':'var(--accent)',color:'var(--text-primary)',fontSize:12,fontWeight:700,
             cursor:'pointer',transition:'background .2s',whiteSpace:'nowrap'
-          }}>{copied?'Lien copié ✓':'Copier'}</button>
+          }}>{copied?t('launch_copied'):t('launch_copy')}</button>
         </div>
       </div>
 
-      {/* QR code */}
-      <div style={{background:'#fff',borderRadius:12,padding:'10px',display:'inline-block'}}>
+      {/* QR code + URL */}
+      <div style={{background:'var(--text-primary)',borderRadius:'var(--radius-card)',padding:'10px',display:'inline-block'}}>
         <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(VERCEL_URL)}&size=100x100`} alt="QR" style={{width:100,height:100,display:'block'}}/>
       </div>
-      <div style={{fontSize:11,color:'#444',marginTop:6}}>{VERCEL_URL}</div>
+      <div style={{fontSize:12,color:'var(--text-tertiary)',marginTop:6}}>{VERCEL_URL}</div>
     </div>
   );
 };
@@ -1331,30 +1352,184 @@ const LaunchScreen = ({onSelectLang, fading}) => {
 /* ─────────────────────────────────────────────────────────────
    SCREEN 0 — SUPER APP
 ───────────────────────────────────────────────────────────── */
-const SuperApp = ({profile,onEnterTV,onSwitch}) => (
-  <div style={{background:'#000',minHeight:'100%',color:'#fff'}}>
-    <div style={{padding:'50px 20px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-      <div>
-        <div style={{fontSize:12,color:'#888'}}>{t('hello')}</div>
-        <div style={{fontSize:20,fontWeight:700}}>Anouar 👋</div>
-      </div>
-      <button onClick={onSwitch} style={{background:'#1a1a1a',border:'1px solid #333',borderRadius:20,padding:'7px 14px',color:'#fff',fontSize:12,cursor:'pointer'}}>⚙ Profil {profile}</button>
-    </div>
-    <div style={{margin:'0 20px 20px',background:'#111',borderRadius:12,padding:'12px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-      <span style={{fontSize:13,color:'#888'}}>{t('my_sub')}</span>
-      <span style={{fontSize:13,fontWeight:600,color:profile==='C'?'#666':'#FF6B00'}}>{PROFILES[profile].badge}</span>
-    </div>
-    <div style={{padding:'0 20px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-      {[{id:'tv',label:'Max it TV',icon:'📺',hi:true},{id:'t',label:'Transfert',icon:'💸',hi:false},{id:'r',label:'Recharge',icon:'📱',hi:false},{id:'s',label:'Shopping',icon:'🛍️',hi:false}].map(s=>(
-        <div key={s.id} onClick={s.id==='tv'?onEnterTV:undefined} style={{background:s.hi?'#FF6B00':'#1a1a1a',borderRadius:16,padding:'24px 20px',cursor:s.id==='tv'?'pointer':'default',display:'flex',flexDirection:'column',gap:8}}>
-          <span style={{fontSize:32}}>{s.icon}</span>
-          <span style={{fontSize:14,fontWeight:600,color:'#fff'}}>{s.label}</span>
-          {s.hi && <span style={{fontSize:11,color:'rgba(255,255,255,.7)'}}>{t('tap_access')}</span>}
+const SuperApp = ({profile,onEnterTV,onSwitch,onContent}) => {
+  const continueItem = NATIVE.find(n=>n.prog>0)||NATIVE[0];
+  const DISCOVER = [
+    {id:'netflix',name:'Netflix',emoji:'🎬',desc:'Séries · Films · Originals',price:'2 900'},
+    {id:'canal',name:'Canal+',emoji:'📺',desc:'Sport · Cinéma · Séries',price:'3 500'},
+    {id:'paramount',name:'Paramount+',emoji:'🎥',desc:'Films · Séries exclusives',price:'1 500'},
+  ];
+  const UNIVERS = [
+    {id:'tv',label:'Max it TV',icon:'📺',accent:true,action:onEnterTV},
+    {id:'t',label:'Transfert',icon:'💸',accent:false,action:null},
+    {id:'r',label:'Recharge',icon:'📱',accent:false,action:null},
+    {id:'s',label:'Shopping',icon:'🛍️',accent:false,action:null},
+  ];
+  const NAV_ITEMS = [
+    {icon:'🏠',label:'Accueil',active:true},
+    {icon:'↔️',label:'Services',active:false},
+    {icon:null,label:'',active:false},
+    {icon:'💰',label:'OM',active:false},
+    {icon:'👤',label:'Compte',active:false},
+  ];
+  return (
+    <div style={{background:'var(--bg-primary)',height:'100%',display:'flex',flexDirection:'column',position:'relative',color:'var(--text-primary)'}}>
+      {/* Top nav */}
+      <div style={{padding:'46px 16px 12px',display:'flex',justifyContent:'space-between',alignItems:'center',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <div onClick={onSwitch} style={{width:40,height:40,borderRadius:'var(--radius-avatar)',background:'var(--bg-interactive)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}}>
+            <span style={{fontSize:15,fontWeight:700,color:'var(--text-primary)'}}>{profile}</span>
+          </div>
+          <div>
+            <div style={{fontSize:11,color:'var(--text-tertiary)'}}>{t('hello')}</div>
+            <div style={{fontSize:15,fontWeight:700,color:'var(--text-primary)'}}>Anouar 👋</div>
+          </div>
         </div>
-      ))}
+        <div style={{display:'flex',gap:18,alignItems:'center'}}>
+          <span style={{fontSize:18,cursor:'pointer'}}>🔍</span>
+          <span style={{fontSize:18,cursor:'pointer'}}>💬</span>
+          <div style={{position:'relative',cursor:'pointer'}}>
+            <span style={{fontSize:18}}>🔔</span>
+            <div style={{position:'absolute',top:-2,right:-2,width:8,height:8,background:'#FF4444',borderRadius:'50%'}}/>
+          </div>
+        </div>
+      </div>
+
+      {/* Scrollable content */}
+      <div style={{flex:1,overflowY:'auto',padding:'0 var(--padding-horizontal) 88px'}}>
+
+        {/* Card Compte Principal */}
+        <div style={{background:'var(--bg-card)',borderRadius:16,padding:20,marginBottom:12,display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+          <div>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+              <div style={{width:28,height:28,borderRadius:8,background:'var(--accent)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14}}>💰</div>
+              <span style={{fontSize:16,fontWeight:700,color:'var(--text-primary)'}}>Compte Principal</span>
+            </div>
+            <div style={{fontSize:20,fontWeight:700,color:'var(--text-primary)',marginBottom:14,letterSpacing:2}}>***** FCFA</div>
+            <button style={{background:'var(--bg-interactive)',border:'1px solid var(--border-default)',borderRadius:'var(--radius-pill)',padding:'7px 16px',color:'var(--text-primary)',fontSize:12,fontWeight:500,cursor:'pointer'}}>
+              Afficher le solde
+            </button>
+          </div>
+          <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+            <div style={{background:'var(--text-primary)',borderRadius:6,padding:6}}>
+              <img src={`https://api.qrserver.com/v1/create-qr-code/?data=maxit-demo&size=52x52`} alt="QR" style={{width:52,height:52,display:'block'}}/>
+            </div>
+            <div style={{display:'flex',gap:3}}>
+              <div style={{width:16,height:4,background:'var(--accent)',borderRadius:2}}/>
+              <div style={{width:12,height:4,background:'#00A8FF',borderRadius:2}}/>
+              <div style={{width:14,height:4,background:'var(--success)',borderRadius:2}}/>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Mes Soldes */}
+        <div style={{background:'var(--text-primary)',borderRadius:16,padding:16,marginBottom:16}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
+            <span style={{fontSize:15,fontWeight:700,color:'#1a1a1a'}}>Mes Soldes</span>
+            <span style={{fontSize:13,color:'var(--accent)',cursor:'pointer',fontWeight:500}}>Voir les détails ›</span>
+          </div>
+          <div style={{display:'flex',gap:8,justifyContent:'space-between'}}>
+            {[{icon:'💰',label:'Orange Money',val:'8 500 XOF'},{icon:'📱',label:'Crédit',val:'2 450 XOF'},{icon:'🌐',label:'Data',val:'3.2 Go'}].map(s=>(
+              <div key={s.label} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:3}}>
+                <span style={{fontSize:22}}>{s.icon}</span>
+                <span style={{fontSize:10,color:'#666',fontWeight:500,textAlign:'center'}}>{s.label}</span>
+                <span style={{fontSize:12,fontWeight:700,color:'#1a1a1a'}}>{s.val}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section Max it TV */}
+        <div style={{marginBottom:20}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+            <span style={{fontSize:18,fontWeight:700,color:'var(--text-primary)'}}>Max it TV</span>
+            <span onClick={onEnterTV} style={{fontSize:13,color:'var(--accent)',cursor:'pointer',fontWeight:500}}>Ouvrir ›</span>
+          </div>
+          {/* Mini carousel */}
+          <div style={{display:'flex',gap:'var(--gap-cards)',overflowX:'auto',marginLeft:'-var(--padding-horizontal)',paddingRight:4}}>
+            {NATIVE.slice(0,3).map(item=>(
+              <div key={item.id} onClick={()=>onContent&&onContent(item)} style={{
+                width:160,height:90,flexShrink:0,borderRadius:'var(--radius-card)',overflow:'hidden',
+                background:GRAD[item.id]||'var(--bg-card)',cursor:'pointer',position:'relative'
+              }}>
+                <div style={{position:'absolute',inset:0,background:'linear-gradient(transparent 35%,rgba(0,0,0,.85) 100%)'}}/>
+                {item.prog>0&&(
+                  <div style={{position:'absolute',bottom:0,left:0,right:0,height:3,background:'rgba(255,255,255,.15)'}}>
+                    <div style={{width:`${item.prog}%`,height:'100%',background:'var(--progress-content)'}}/>
+                  </div>
+                )}
+                {item.type==='Live'&&(
+                  <div style={{position:'absolute',top:6,left:6,background:'var(--badge-live)',borderRadius:'var(--radius-pill)',padding:'2px 7px',fontSize:9,fontWeight:700,color:'var(--text-primary)'}}>LIVE</div>
+                )}
+                <div style={{position:'absolute',bottom:item.prog>0?7:6,left:8,right:8}}>
+                  <span style={{fontSize:12,fontWeight:700,color:'var(--text-primary)',lineHeight:1.3}}>{item.title}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Continuer pill */}
+          {continueItem.prog>0&&(
+            <button onClick={()=>onContent&&onContent(continueItem)} style={{
+              marginTop:10,background:'var(--accent)',color:'var(--text-primary)',
+              borderRadius:'var(--radius-pill)',padding:'8px 16px',border:'none',
+              fontSize:13,fontWeight:700,cursor:'pointer'
+            }}>▶ Continuer {continueItem.title}</button>
+          )}
+        </div>
+
+        {/* Section Découvrir plus */}
+        <div style={{marginBottom:20}}>
+          <div style={{fontSize:16,fontWeight:700,color:'var(--text-primary)',marginBottom:12}}>Découvrir plus</div>
+          {DISCOVER.map(svc=>(
+            <div key={svc.id} style={{background:'var(--bg-card)',borderRadius:'var(--radius-partner-card)',padding:16,marginBottom:10,display:'flex',alignItems:'center',gap:12}}>
+              <div style={{width:80,height:56,borderRadius:'var(--radius-card)',background:'var(--bg-interactive)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:28,flexShrink:0}}>{svc.emoji}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:14,fontWeight:700,color:'var(--text-primary)',marginBottom:3}}>{svc.name}</div>
+                <div style={{fontSize:12,color:'var(--text-secondary)',marginBottom:8}}>{svc.desc}</div>
+                <div style={{fontSize:11,color:'var(--text-tertiary)'}}>À partir de {svc.price} XOF/mois</div>
+              </div>
+              <button style={{flexShrink:0,background:'var(--accent)',color:'var(--text-primary)',borderRadius:'var(--radius-pill)',padding:'7px 14px',border:'none',fontSize:12,fontWeight:700,cursor:'pointer'}}>Ajouter</button>
+            </div>
+          ))}
+        </div>
+
+        {/* Grille univers */}
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:8}}>
+          {UNIVERS.map(s=>(
+            <div key={s.id} onClick={s.action||undefined} style={{
+              background:'var(--bg-interactive)',borderRadius:16,padding:'20px',
+              cursor:s.action?'pointer':'default',display:'flex',flexDirection:'column',gap:8,
+              border:s.accent?'1.5px solid var(--accent)':'1.5px solid transparent'
+            }}>
+              <span style={{fontSize:28}}>{s.icon}</span>
+              <span style={{fontSize:14,fontWeight:700,color:'var(--text-primary)',textAlign:'center'}}>{s.label}</span>
+              {s.accent&&<span style={{fontSize:11,color:'var(--accent)',fontWeight:500}}>{t('tap_access')}</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom nav */}
+      <div style={{position:'absolute',bottom:0,left:0,right:0,background:'var(--bg-nav)',borderRadius:'var(--radius-nav)',paddingBottom:20,paddingTop:10,display:'flex',alignItems:'center',justifyContent:'space-around'}}>
+        {NAV_ITEMS.map((item,i)=>
+          item.icon===null ? (
+            <div key={i} onClick={onEnterTV} style={{width:52,height:52,borderRadius:'var(--radius-avatar)',background:'var(--accent)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',marginTop:-16,boxShadow:'0 4px 16px rgba(255,107,0,.4)'}}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                <rect x="1" y="1" width="7" height="7" rx="1.5"/><rect x="12" y="1" width="7" height="7" rx="1.5"/>
+                <rect x="1" y="12" width="7" height="7" rx="1.5"/><rect x="12" y="12" width="7" height="7" rx="1.5"/>
+              </svg>
+            </div>
+          ) : (
+            <div key={i} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,cursor:'pointer'}}>
+              <span style={{fontSize:16}}>{item.icon}</span>
+              <span style={{fontSize:10,fontWeight:500,color:item.active?'var(--accent)':'var(--text-secondary)'}}>{item.label}</span>
+            </div>
+          )
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 /* ─────────────────────────────────────────────────────────────
    PROFILE SWITCHER
@@ -4807,7 +4982,7 @@ const App = () => {
   /* ── render ── */
   const renderMain = () => {
     switch(screen){
-      case 'superapp': return <SuperApp profile={profile} onEnterTV={enterTV} onSwitch={()=>setShowSwitch(true)}/>;
+      case 'superapp': return <SuperApp profile={profile} onEnterTV={enterTV} onSwitch={()=>setShowSwitch(true)} onContent={goContent}/>;
       case 'home':     return <Home profile={profile} userSubs={userSubs} subPlans={subPlans} pendingDowngrades={pendingDowngrades} coins={coins}
         onBack={()=>setScreen('superapp')} onContent={goContent} onPartner={goPartner} onPaywall={openPw}
         onSwitch={()=>setShowSwitch(true)} onFTVgo={()=>setScreen('ftvgo')} onFTVPlay={goFTVPlay}
