@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Max it TV — Guide des cas à tester</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"SF Pro Display",BlinkMacSystemFont,"Segoe UI",sans-serif;background:#fff;color:#1a1a1a;padding:32px 24px;max-width:960px;margin:0 auto}
+  .lang-bar{display:flex;gap:0;margin-bottom:32px;border-radius:10px;overflow:hidden;border:1.5px solid #FF6B00;width:fit-content}
+  .lang-btn{padding:8px 24px;background:transparent;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all .15s}
+  .lang-btn.active{background:#FF6B00;color:#fff}
+  .lang-btn:not(.active){color:#FF6B00}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+  .logo{background:#FF6B00;border-radius:10px;width:44px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .logo svg{display:block}
+  h1{font-size:24px;font-weight:800;color:#1a1a1a}
+  .subtitle{font-size:13px;color:#888;margin-bottom:16px;margin-top:4px}
+  .meta-bar{display:flex;gap:20px;font-size:12px;color:#aaa;margin-bottom:36px;flex-wrap:wrap}
+  .meta-bar span{display:flex;align-items:center;gap:4px}
+  .case{border:1px solid #e8e8e8;border-radius:14px;padding:20px 22px;margin-bottom:16px;page-break-inside:avoid}
+  .case-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+  .case-num{background:#FF6B00;color:#fff;font-size:13px;font-weight:800;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .case-title{font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:5px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .case-tag{display:inline-block;background:#FFF3EC;color:#FF6B00;font-size:11px;font-weight:600;padding:2px 9px;border-radius:8px;border:1px solid #FFD5B8}
+  .case-tag.blue{background:#EFF6FF;color:#2563EB;border-color:#BFDBFE}
+  .case-tag.green{background:#F0FBF4;color:#16A34A;border-color:#BBF7D0}
+  .case-tag.red{background:#FFF1F2;color:#DC2626;border-color:#FECACA}
+  .case-tag.orange{background:#FFF7ED;color:#C2410C;border-color:#FED7AA}
+  .steps{list-style:none;padding:0;margin-bottom:2px}
+  .steps li{display:flex;gap:10px;font-size:13px;color:#444;margin-bottom:7px;line-height:1.5}
+  .steps li::before{content:'→';color:#FF6B00;font-weight:700;flex-shrink:0;margin-top:0}
+  .expected{margin-top:12px;background:#F0FBF4;border-left:3px solid #00C851;border-radius:0 8px 8px 0;padding:10px 14px}
+  .expected-label{font-size:11px;font-weight:700;color:#00C851;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .expected p{font-size:13px;color:#2d5a3d;line-height:1.5}
+  .attention{margin-top:10px;background:#FFFBEB;border-left:3px solid #F59E0B;border-radius:0 8px 8px 0;padding:10px 14px}
+  .attention-label{font-size:11px;font-weight:700;color:#D97706;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .attention p{font-size:13px;color:#78350F;line-height:1.5}
+  .divider{height:1px;background:#f0f0f0;margin:24px 0}
+  .section-title{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;margin-top:32px;display:flex;align-items:center;gap:8px}
+  .section-title::after{content:'';flex:1;height:1px;background:#f0f0f0}
+  .intro-box{background:#F8F8F8;border-radius:12px;padding:18px 20px;margin-bottom:32px}
+  .intro-box h3{font-size:13px;font-weight:700;margin-bottom:10px;color:#1a1a1a}
+  .intro-row{display:flex;gap:8px;align-items:baseline;margin-bottom:5px;font-size:13px;color:#444}
+  .intro-row .badge{font-weight:700;min-width:70px;color:#1a1a1a}
+  .otp-note{background:#FF6B00;color:#fff;font-size:13px;font-weight:700;border-radius:8px;padding:10px 14px;margin-top:12px}
+  .results-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px;page-break-inside:avoid}
+  .results-table th{background:#1a1a1a;color:#fff;padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .results-table th:nth-child(n+3){text-align:center;width:60px}
+  .results-table td{padding:7px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+  .results-table td:nth-child(n+3){text-align:center;font-size:16px}
+  .results-table tr:nth-child(even){background:#FAFAFA}
+  .results-table .num{color:#FF6B00;font-weight:700}
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid #e8e8e8;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#aaa}
+  @media print{
+    body{padding:12px 16px;max-width:100%}
+    .lang-bar{display:none}
+    .case{border:1px solid #ccc;margin-bottom:10px;padding:12px 14px;page-break-inside:avoid}
+    h1{font-size:18px}
+    .subtitle,.meta-bar{margin-bottom:10px}
+    .section-title{margin-top:16px;margin-bottom:10px}
+    .intro-box{padding:12px 14px}
+  }
+  [data-en]{display:none}
+  body.en [data-fr]{display:none}
+  body.en [data-en]{display:revert}
+  body.en .case-header [data-en]{display:flex}
+  body.en .expected [data-en]{display:block}
+  body.en .attention [data-en]{display:block}
+  body.en .section-title [data-en]{display:inline}
+  body.en .intro-box [data-en]{display:block}
+  body.en .otp-note [data-en]{display:inline}
+  body.en .otp-note [data-fr]{display:none}
+</style>
+</head>
+<body>
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('fr')">🇫🇷 Français</button>
+  <button class="lang-btn" onclick="setLang('en')">🇬🇧 English</button>
+</div>
+
+<header>
+  <div class="logo">
+    <svg width="12" height="16" viewBox="0 0 10 12" fill="white"><polygon points="0,0 10,6 0,12"/></svg>
+  </div>
+  <h1>Max it TV</h1>
+</header>
+<p class="subtitle">
+  <span data-fr>Guide des cas à tester — Simulation expérience mobile · Version démo</span>
+  <span data-en>Test case guide — Mobile experience simulation · Demo version</span>
+</p>
+<div class="meta-bar">
+  <span>📋 <span data-fr>27 cas de test</span><span data-en>27 test cases</span></span>
+  <span>👤 <span data-fr>3 profils utilisateur</span><span data-en>3 user profiles</span></span>
+  <span>🔗 <span data-fr>URL démo</span><span data-en>Demo URL</span> : maxit-tv-v2.vercel.app</span>
+</div>
+
+<!-- INTRO BOX -->
+<div class="intro-box">
+  <h3 data-fr>Avant de commencer — Profils disponibles</h3>
+  <h3 data-en>Before you start — Available profiles</h3>
+  <div class="intro-row"><span class="badge">Profil A</span><span data-fr>Pack Premium · Accès complet (Max it TV + Netflix + Canal+ + ReelShort + Paramount+ + FTVgo + VeedzTV)</span><span data-en>Premium Pack · Full access (Max it TV + Netflix + Canal+ + ReelShort + Paramount+ + FTVgo + VeedzTV)</span></div>
+  <div class="intro-row"><span class="badge">Profil B</span><span data-fr>Pack Essentiel · Accès partiel (Max it TV core + FTVgo + VeedzTV)</span><span data-en>Essential Pack · Partial access (Max it TV core + FTVgo + VeedzTV)</span></div>
+  <div class="intro-row"><span class="badge">Profil C</span><span data-fr>Sans abonnement · Upsell activé · Publicités sur contenu core</span><span data-en>No subscription · Upsell active · Ads on core content</span></div>
+  <div class="intro-row" style="margin-top:8px"><span class="badge" style="color:#888">Solde OM</span><span>4 200 XOF</span></div>
+  <div class="otp-note">
+    <span data-fr>Code OTP Orange Money pour les démonstrations de paiement : <span style="font-size:18px;letter-spacing:4px">1234</span></span>
+    <span data-en>Orange Money OTP code for payment demos: <span style="font-size:18px;letter-spacing:4px">1234</span></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 1 : PROFILS
+══════════════════════════════════════ -->
+<div class="section-title">
+  <span data-fr>01 · Profils utilisateur</span>
+  <span data-en>01 · User profiles</span>
+</div>
+
+<!-- CAS 1 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">1</div>
+    <div>
+      <div class="case-title" data-fr>Profil A — Pack Premium · Accès complet</div>
+      <div class="case-title" data-en>Profile A — Premium Pack · Full access</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag green">Accès total</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Ouvrir la simulation → écran Super App</li>
+    <li data-en>Open the simulation → Super App screen</li>
+    <li data-fr>Sélectionner Profil A via le bouton ⚙ Profil</li>
+    <li data-en>Select Profile A via the ⚙ Profile button</li>
+    <li data-fr>Taper "Max it TV" → accès direct à l'accueil</li>
+    <li data-en>Tap "Max it TV" → direct access to home</li>
+    <li data-fr>Vérifier que tous les rails sont déverrouillés (Netflix, Canal+, ReelShort, FTVgo, VeedzTV)</li>
+    <li data-en>Verify all rails are unlocked (Netflix, Canal+, ReelShort, FTVgo, VeedzTV)</li>
+    <li data-fr>Tester la lecture d'un film natif depuis le Top 10</li>
+    <li data-en>Test playback of a native film from the Top 10</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Accès immédiat à tous les rails. Aucun cadenas visible. Player s'ouvre sans demande de paiement. Barre de progression + minuteur visibles.</p>
+    <p data-en>Immediate access to all rails. No lock icons visible. Player opens without payment prompt. Progress bar + timer visible.</p>
+  </div>
+</div>
+
+<!-- CAS 2 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">2</div>
+    <div>
+      <div class="case-title" data-fr>Profil B — Pack Essentiel · Accès partiel</div>
+      <div class="case-title" data-en>Profile B — Essential Pack · Partial access</div>
+      <div class="tags"><span class="case-tag">Profil B</span><span class="case-tag blue">Accès partiel</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Passer au Profil B via ⚙ → Changer de profil</li>
+    <li data-en>Switch to Profile B via ⚙ → Change profile</li>
+    <li data-fr>Sur l'accueil : vérifier les cadenas sur Netflix, Canal+, ReelShort, Paramount+</li>
+    <li data-en>On home: verify lock icons on Netflix, Canal+, ReelShort, Paramount+</li>
+    <li data-fr>Taper sur un contenu Netflix verrouillé</li>
+    <li data-en>Tap a locked Netflix item</li>
+    <li data-fr>Observer l'ouverture du paywall pour Netflix</li>
+    <li data-en>Observe the paywall opening for Netflix</li>
+    <li data-fr>Vérifier qu'un contenu FTVgo ou VeedzTV est accessible sans paywall</li>
+    <li data-en>Verify that FTVgo or VeedzTV content is accessible without paywall</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Contenu core Max it TV + FTVgo + VeedzTV accessibles. Netflix / Canal+ / ReelShort / Paramount+ verrouillés. Paywall s'ouvre pour le bon service.</p>
+    <p data-en>Core Max it TV + FTVgo + VeedzTV content accessible. Netflix / Canal+ / ReelShort / Paramount+ locked. Paywall opens for the right service.</p>
+  </div>
+</div>
+
+<!-- CAS 3 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">3</div>
+    <div>
+      <div class="case-title" data-fr>Profil C — Sans pack · Écran d'upsell</div>
+      <div class="case-title" data-en>Profile C — No pack · Upsell screen</div>
+      <div class="tags"><span class="case-tag">Profil C</span><span class="case-tag red">Publicités</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Passer au Profil C via ⚙ → Changer de profil</li>
+    <li data-en>Switch to Profile C via ⚙ → Change profile</li>
+    <li data-fr>Observer la redirection vers l'écran "Découvrez Max it TV"</li>
+    <li data-en>Observe redirect to the "Discover Max it TV" screen</li>
+    <li data-fr>Vérifier les 3 sections : offres Max it TV, partenaires, Explorer gratuitement</li>
+    <li data-en>Verify the 3 sections: Max it TV plans, partners, Explore for free</li>
+    <li data-fr>Taper "Explorer gratuitement" → accès à l'accueil sans abonnement</li>
+    <li data-en>Tap "Explore for free" → access home without subscription</li>
+    <li data-fr>Lire un contenu core : une publicité pré-roll doit apparaître</li>
+    <li data-en>Play a core content item: a pre-roll ad must appear</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Redirection vers upsell immédiate. "Explorer gratuitement" navigue vers l'accueil. Pré-roll de 15s affiché avant la lecture du contenu core.</p>
+    <p data-en>Immediate redirect to upsell. "Explore for free" navigates to home. 15s pre-roll shown before core content playback.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 2 : PAIEMENT
+══════════════════════════════════════ -->
+<div class="section-title">
+  <span data-fr>02 · Flux de paiement</span>
+  <span data-en>02 · Payment flow</span>
+</div>
+
+<!-- CAS 4 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">4</div>
+    <div>
+      <div class="case-title" data-fr>Souscription standard — Max it TV / FTVgo / Canal+ / Paramount+</div>
+      <div class="case-title" data-en>Standard subscription — Max it TV / FTVgo / Canal+ / Paramount+</div>
+      <div class="tags"><span class="case-tag">Profil B ou C</span><span class="case-tag blue">Paywall standard</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Taper sur un contenu verrouillé ou "Voir l'offre" sur un service</li>
+    <li data-en>Tap a locked item or "View offer" on a service</li>
+    <li data-fr>Dans le paywall : choisir une durée (1h, 1j, 7j, 30j)</li>
+    <li data-en>In the paywall: choose a duration (1h, 1d, 7d, 30d)</li>
+    <li data-fr>Choisir Sans data ou Avec data incluse</li>
+    <li data-en>Choose Without data or With data included</li>
+    <li data-fr>Sélectionner le moyen de paiement (DCB ou OM)</li>
+    <li data-en>Select payment method (DCB or OM)</li>
+    <li data-fr>Taper "Continuer →" → écran upsell bundle</li>
+    <li data-en>Tap "Continue →" → upsell bundle screen</li>
+    <li data-fr>Confirmer ou refuser les upsells → écran de confirmation</li>
+    <li data-en>Confirm or decline upsells → confirmation screen</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Paywall correct pour le service. Prix en XOF. Moyen de paiement sélectionnable. Upsell avec total temps réel. Écran de confirmation avec récap complet.</p>
+    <p data-en>Correct paywall for the service. Price in XOF. Payment method selectable. Upsell with real-time total. Confirmation screen with full recap.</p>
+  </div>
+</div>
+
+<!-- CAS 5 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">5</div>
+    <div>
+      <div class="case-title" data-fr>Souscription Netflix — Parcours 3 étapes</div>
+      <div class="case-title" data-en>Netflix subscription — 3-step flow</div>
+      <div class="tags"><span class="case-tag">Netflix</span><span class="case-tag blue">Paywall multi-step</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Taper un contenu Netflix verrouillé → paywall Netflix</li>
+    <li data-en>Tap a locked Netflix item → Netflix paywall</li>
+    <li data-fr>Étape 1/3 : choisir la durée (7j ou 1 mois)</li>
+    <li data-en>Step 1/3: choose duration (7d or 1 month)</li>
+    <li data-fr>Étape 2/3 : choisir le plan (Avec pub / Standard / Full Netflix)</li>
+    <li data-en>Step 2/3: choose plan (With ads / Standard / Full Netflix)</li>
+    <li data-fr>Étape 3/3 : choisir data → récap affiché</li>
+    <li data-en>Step 3/3: choose data → summary shown</li>
+    <li data-fr>Moyen de paiement → Continuer → upsell → confirmation</li>
+    <li data-en>Payment method → Continue → upsell → confirmation</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Navigation étape par étape avec bouton retour. Prix mis à jour à chaque sélection. Récap avant paiement. Écran d'activation puis redirection Netflix simulée.</p>
+    <p data-en>Step-by-step navigation with back button. Price updates on each selection. Summary before payment. Activation screen then simulated Netflix redirect.</p>
+  </div>
+</div>
+
+<!-- CAS 6 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">6</div>
+    <div>
+      <div class="case-title" data-fr>Souscription ReelShort — Coins vs All-access</div>
+      <div class="case-title" data-en>ReelShort subscription — Coins vs All-access</div>
+      <div class="tags"><span class="case-tag">ReelShort</span><span class="case-tag blue">Toggle Coins/All-access</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Accéder au paywall ReelShort via un contenu verrouillé ou l'onglet En plus</li>
+    <li data-en>Open ReelShort paywall via locked content or the More tab</li>
+    <li data-fr>Mode Coins : sélectionner un pack (S / M / L) → voir le solde et le bonus</li>
+    <li data-en>Coins mode: select a pack (S/M/L) → see balance and bonus</li>
+    <li data-fr>Passer en mode All-access 7j → choisir avec/sans data</li>
+    <li data-en>Switch to All-access 7d → choose with/without data</li>
+    <li data-fr>Vérifier que l'upsell Gaming affiche "Coins bonus +200" pour ReelShort</li>
+    <li data-en>Verify that Gaming upsell shows "Coins bonus +200" for ReelShort</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Toggle Coins/All-access fonctionnel. Upsell "Coins bonus +200" spécifique à ReelShort. Solde coins mis à jour après achat.</p>
+    <p data-en>Coins/All-access toggle works. "Coins bonus +200" upsell specific to ReelShort. Coins balance updated after purchase.</p>
+  </div>
+</div>
+
+<!-- CAS 7 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">7</div>
+    <div>
+      <div class="case-title" data-fr>Upsell bundle — Options au moment du paiement</div>
+      <div class="case-title" data-en>Upsell bundle — Add-ons at checkout</div>
+      <div class="tags"><span class="case-tag">Tous services</span><span class="case-tag green">Total temps réel</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Déclencher n'importe quel paywall, configurer l'offre et le paiement</li>
+    <li data-en>Trigger any paywall, configure the offer and payment</li>
+    <li data-fr>Taper "Continuer →" → écran upsell avec 3 options</li>
+    <li data-en>Tap "Continue →" → upsell screen with 3 options</li>
+    <li data-fr>Sélectionner 500 Mo + Music 7j → observer le total mis à jour en temps réel</li>
+    <li data-en>Select 500 Mo + Music 7d → observe real-time total update</li>
+    <li data-fr>Taper "Confirmer · [total] XOF" → confirmation avec récap complet</li>
+    <li data-en>Tap "Confirm · [total] XOF" → confirmation with full recap</li>
+    <li data-fr>Tester aussi "Non merci" → confirmation sans upsells</li>
+    <li data-en>Also test "No thanks" → confirmation without upsells</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Total = service + upsells sélectionnés. Confirmation liste chaque upsell activé. "Non merci" confirme au prix de base uniquement.</p>
+    <p data-en>Total = service + selected upsells. Confirmation lists each activated upsell. "No thanks" confirms at base price only.</p>
+  </div>
+</div>
+
+<!-- CAS 8 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">8</div>
+    <div>
+      <div class="case-title" data-fr>Moyens de paiement — DCB vs Orange Money · OTP</div>
+      <div class="case-title" data-en>Payment methods — DCB vs Orange Money · OTP</div>
+      <div class="tags"><span class="case-tag">Paywall</span><span class="case-tag blue">DCB / OM</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Choisir une offre dont le prix &lt; 4 200 XOF (ex : Max it TV 1 jour)</li>
+    <li data-en>Choose an offer priced below 4,200 XOF (e.g. Max it TV 1 day)</li>
+    <li data-fr>Vérifier Orange Money disponible (solde affiché : 4 200 XOF)</li>
+    <li data-en>Verify Orange Money available (displayed balance: 4,200 XOF)</li>
+    <li data-fr>Sélectionner Orange Money → saisir OTP <strong>1234</strong> → paiement validé</li>
+    <li data-en>Select Orange Money → enter OTP <strong>1234</strong> → payment validated</li>
+    <li data-fr>Choisir ensuite une offre &gt; 4 200 XOF (ex : Max it TV 30j avec data)</li>
+    <li data-en>Then choose an offer above 4,200 XOF (e.g. Max it TV 30d with data)</li>
+    <li data-fr>Observer : Orange Money grisé avec mention "Solde insuffisant"</li>
+    <li data-en>Observe: Orange Money grayed out with "Insufficient balance"</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>DCB toujours disponible. OM disponible si prix ≤ 4 200 XOF, grisé sinon. Confirmation affiche "Nouveau solde OM" après paiement OM.</p>
+    <p data-en>DCB always available. OM available if price ≤ 4,200 XOF, grayed out otherwise. Confirmation shows "New OM balance" after OM payment.</p>
+  </div>
+  <div class="attention">
+    <div class="attention-label">⚠ <span data-fr>Note</span><span data-en>Note</span></div>
+    <p data-fr>Code OTP pour la démo : <strong>1234</strong>. Tout autre code affiche une erreur.</p>
+    <p data-en>OTP code for the demo: <strong>1234</strong>. Any other code shows an error.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 3 : PLAYERS
+══════════════════════════════════════ -->
+<div class="section-title">
+  <span data-fr>03 · Players & lecture</span>
+  <span data-en>03 · Players & playback</span>
+</div>
+
+<!-- CAS 9 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">9</div>
+    <div>
+      <div class="case-title" data-fr>Player horizontal — Simulation lecture + contrôles</div>
+      <div class="case-title" data-en>Horizontal player — Playback simulation + controls</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag green">Player</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Sur l'accueil (Profil A), taper un contenu core dans le Top 10 ou un rail natif</li>
+    <li data-en>On home (Profile A), tap a core content item in Top 10 or a native rail</li>
+    <li data-fr>Sur l'écran de détail, taper "Regarder"</li>
+    <li data-en>On the detail screen, tap "Watch"</li>
+    <li data-fr>Vérifier la barre de progression qui avance automatiquement</li>
+    <li data-en>Verify the progress bar advancing automatically</li>
+    <li data-fr>Taper le bouton pause ▐▐ → la progression s'arrête</li>
+    <li data-en>Tap the pause ▐▐ button → progress stops</li>
+    <li data-fr>Taper lecture ▶ → la progression reprend</li>
+    <li data-en>Tap play ▶ button → progress resumes</li>
+    <li data-fr>Taper ← pour retourner à l'écran de détail</li>
+    <li data-en>Tap ← to return to the detail screen</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Barre de progression animée. Minuteur affiché (ex : 0:08 / 1:36). Pause/lecture fonctionnels. Retour vers l'écran de détail via ←.</p>
+    <p data-en>Animated progress bar. Timer displayed (e.g. 0:08 / 1:36). Pause/play functional. Back to detail screen via ←.</p>
+  </div>
+</div>
+
+<!-- CAS 10 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">10</div>
+    <div>
+      <div class="case-title" data-fr>Player vertical — NWTV & Séries verticales</div>
+      <div class="case-title" data-en>Vertical player — NWTV & Vertical series</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag green">Player 9:16</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Sur l'accueil, scroller jusqu'au rail "Vivez l'expérience NWTV en vertical"</li>
+    <li data-en>On home, scroll to the "NWTV vertical experience" rail</li>
+    <li data-fr>Taper une carte 9:16 → player vertical plein écran s'ouvre</li>
+    <li data-en>Tap a 9:16 card → full-screen vertical player opens</li>
+    <li data-fr>Swiper vers le haut/bas ou utiliser les boutons ↑↓ pour naviguer entre épisodes</li>
+    <li data-en>Swipe up/down or use ↑↓ buttons to navigate between episodes</li>
+    <li data-fr>Vérifier la barre de progression et le bouton pause/lecture</li>
+    <li data-en>Verify the progress bar and pause/play button</li>
+    <li data-fr>Tester aussi le rail "Séries · Format vertical"</li>
+    <li data-en>Also test the "Series · Vertical format" rail</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Player vertical 9:16 plein écran. Navigation swipe + boutons. Compteur X/N en haut. Badge LIVE sur NWTV Live. Progression simulée visible.</p>
+    <p data-en>Full-screen 9:16 vertical player. Swipe + button navigation. Counter X/N at top. LIVE badge on NWTV Live. Simulated progress visible.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 4 : PUBLICITÉS
+══════════════════════════════════════ -->
+<div class="section-title">
+  <span data-fr>04 · Système publicitaire (Profil C uniquement)</span>
+  <span data-en>04 · Ad system (Profile C only)</span>
+</div>
+
+<!-- CAS 11 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">11</div>
+    <div>
+      <div class="case-title" data-fr>Publicité pré-roll — 15s, passable après 5s</div>
+      <div class="case-title" data-en>Pre-roll ad — 15s, skippable after 5s</div>
+      <div class="tags"><span class="case-tag">Profil C</span><span class="case-tag red">Pub pré-roll</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Passer en Profil C et accéder à l'accueil via "Explorer gratuitement"</li>
+    <li data-en>Switch to Profile C and access home via "Explore for free"</li>
+    <li data-fr>Taper un contenu core → écran de détail → "Regarder"</li>
+    <li data-en>Tap a core content item → detail screen → "Watch"</li>
+    <li data-fr>Observer le pré-roll : décompte de 15s, bouton "Ignorer la pub →" grisé pendant 5s</li>
+    <li data-en>Observe pre-roll: 15s countdown, "Skip ad →" button grayed out for 5s</li>
+    <li data-fr>Attendre 5s → taper "Ignorer la pub →" pour passer</li>
+    <li data-en>Wait 5s → tap "Skip ad →" to skip</li>
+    <li data-fr>Ou attendre les 15s complets → la lecture démarre automatiquement</li>
+    <li data-en>Or wait the full 15s → playback starts automatically</li>
+    <li data-fr>Taper sur la publicité → page de tracking annonceur s'ouvre</li>
+    <li data-en>Tap the ad → advertiser tracking page opens</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Pré-roll bloque la lecture. Décompte visible. "Ignorer" apparaît après 5s. Clic sur la pub ouvre la page tracking (pixel, RGPD, ID session). Retour au player via "← Retour au contenu".</p>
+    <p data-en>Pre-roll blocks playback. Countdown visible. "Skip" appears after 5s. Clicking the ad opens tracking page (pixel, GDPR, session ID). Back to player via "← Back to content".</p>
+  </div>
+</div>
+
+<!-- CAS 12a -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num" style="font-size:11px;width:36px;border-radius:10px">12a</div>
+    <div>
+      <div class="case-title" data-fr>Pizza avec Orange Money existant — Commande complète + suivi temps réel</div>
+      <div class="case-title" data-en>Pizza with existing Orange Money — Full order + real-time tracking</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag">Profil B</span><span class="case-tag orange">Pizza 🍕</span><span class="case-tag green">5 min</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Profil A ou B — lancer un contenu natif core, FTVgo ou VeedzTV depuis la home</li>
+    <li data-en>Profile A or B — play a native core, FTVgo or VeedzTV content from the home</li>
+    <li data-fr>Attendre 10 secondes : une notification push "Commander une pizza ?" apparaît · Taper "Commander" — ou taper directement l'icône 🍕 en haut à droite du player</li>
+    <li data-en>Wait 10 seconds: a push notification "Order a pizza?" appears · Tap "Order" — or tap the 🍕 icon at the top right of the player directly</li>
+    <li data-fr>Sélectionner 1 pizza + 1 boisson · Observer le total dynamique se mettre à jour à chaque tap sur +/−</li>
+    <li data-en>Select 1 pizza + 1 drink · Observe the total updating dynamically on each +/− tap</li>
+    <li data-fr>Taper "Continuer →" → vérifier les frais de livraison 500 XOF ajoutés au total</li>
+    <li data-en>Tap "Continue →" → verify 500 XOF delivery fee added to the total</li>
+    <li data-fr>Confirmer l'adresse pré-remplie "Cocody, Abidjan"</li>
+    <li data-en>Confirm the pre-filled address "Cocody, Abidjan"</li>
+    <li data-fr>Sélectionner Orange Money → vérifier le solde affiché : 12 400 XOF</li>
+    <li data-en>Select Orange Money → verify the displayed balance: 12,400 XOF</li>
+    <li data-fr>Taper "Confirmer · [total] XOF" → écran OTP : saisir 1234 · Observer la validation automatique au 4ème chiffre</li>
+    <li data-en>Tap "Confirm · [total] XOF" → OTP screen: enter 1234 · Observe automatic validation on the 4th digit</li>
+    <li data-fr>Observer la confirmation avec récapitulatif complet, numéro de commande #MAX-XXXX</li>
+    <li data-en>Observe confirmation with full recap, order number #MAX-XXXX</li>
+    <li data-fr>Observer les 4 étapes de suivi s'activer automatiquement : Commande reçue (immédiat) → En préparation (6s) → Livreur en route (14s) → Livré ! (24s)</li>
+    <li data-en>Observe 4 tracking steps activating automatically: Order received (immediate) → Preparing (6s) → Delivery on the way (14s) → Delivered! (24s)</li>
+    <li data-fr>Observer l'icône 🛵 se déplacer de gauche à droite sur la carte simulée entre les étapes 3 et 4</li>
+    <li data-en>Observe the 🛵 icon moving left to right on the simulated map between steps 3 and 4</li>
+    <li data-fr>Fermer le sheet → observer le bandeau de suivi orange en bas du player</li>
+    <li data-en>Close the sheet → observe the orange tracking banner at the bottom of the player</li>
+    <li data-fr>Taper le bandeau → le sheet se rouvre sur l'étape de suivi</li>
+    <li data-en>Tap the banner → the sheet reopens on the tracking step</li>
+    <li data-fr>Attendre 24s → observer "Livré ! 🎉" · Le bandeau disparaît 3 secondes après</li>
+    <li data-en>Wait 24s → observe "Delivered! 🎉" · The banner disappears 3 seconds after</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Commande fluide · Vidéo non interrompue · OTP validé automatiquement · Suivi temps réel animé · Scooter se déplace sur la carte · Bandeau persistant dans le player · Disparaît après livraison.</p>
+    <p data-en>Smooth order · Video uninterrupted · OTP auto-validated · Animated real-time tracking · Scooter moves on map · Persistent banner in player · Disappears after delivery.</p>
+  </div>
+  <div class="otp-note" data-fr>Code OTP paiement : <strong>1234</strong></div>
+  <div class="otp-note" data-en>Payment OTP code: <strong>1234</strong></div>
+</div>
+
+<!-- CAS 12b -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num" style="font-size:11px;width:36px;border-radius:10px">12b</div>
+    <div>
+      <div class="case-title" data-fr>Pizza avec création compte Orange Money — Promo -20% appliquée</div>
+      <div class="case-title" data-en>Pizza with Orange Money account creation — -20% promo applied</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag">Profil B</span><span class="case-tag orange">Pizza 🍕</span><span class="case-tag red">⚙ Toggle OM</span><span class="case-tag green">7 min</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Dans le panneau ⚙ Demo : activer le toggle "🧪 Simuler utilisateur sans Orange Money"</li>
+    <li data-en>In the ⚙ Demo panel: enable the "🧪 Simulate user without Orange Money" toggle</li>
+    <li data-fr>Profil A ou B — lancer un contenu natif core, FTVgo ou VeedzTV</li>
+    <li data-en>Profile A or B — play a native core, FTVgo or VeedzTV content</li>
+    <li data-fr>Taper l'icône 🍕 → sélectionner Pizza Poulet Épicé 30cm + Coca-Cola 33cl</li>
+    <li data-en>Tap the 🍕 icon → select Pizza Poulet Épicé 30cm + Coca-Cola 33cl</li>
+    <li data-fr>Confirmer l'adresse de livraison</li>
+    <li data-en>Confirm the delivery address</li>
+    <li data-fr>Observer le badge "🎁 Créer mon compte · -20% sur cette commande" sur l'option Orange Money</li>
+    <li data-en>Observe the "🎁 Create account · -20% on this order" badge on the Orange Money option</li>
+    <li data-fr>Taper sur le badge Orange Money → écran création compte</li>
+    <li data-en>Tap the Orange Money badge → account creation screen</li>
+    <li data-fr>Observer le prénom/nom pré-rempli "Utilisateur Max it" · Créer un PIN : saisir 1234 · Confirmer le PIN : saisir 1234</li>
+    <li data-en>Observe pre-filled name "Utilisateur Max it" · Create PIN: enter 1234 · Confirm PIN: enter 1234</li>
+    <li data-fr>Taper "Créer mon compte →" → écran OTP validation numéro : saisir 5678</li>
+    <li data-en>Tap "Create my account →" → phone number OTP screen: enter 5678</li>
+    <li data-fr>Observer l'écran bienvenue avec animation confetti et badge "-20% appliqué automatiquement"</li>
+    <li data-en>Observe the welcome screen with confetti animation and "-20% automatically applied" badge</li>
+    <li data-fr>Taper "Utiliser mon avantage →" → retour paiement avec OM présélectionné</li>
+    <li data-en>Tap "Use my benefit →" → back to payment with OM pre-selected</li>
+    <li data-fr>Observer le prix barré et le nouveau total réduit · Observer le badge économie en XOF</li>
+    <li data-en>Observe the strikethrough price and new reduced total · Observe the savings badge in XOF</li>
+    <li data-fr>Taper "Confirmer · [total réduit] XOF" → OTP paiement : saisir 1234</li>
+    <li data-en>Tap "Confirm · [reduced total] XOF" → payment OTP: enter 1234</li>
+    <li data-fr>Observer le récapitulatif avec la ligne discount en vert "Discount Orange Money : −[montant] XOF"</li>
+    <li data-en>Observe the recap with green discount line "Orange Money discount: −[amount] XOF"</li>
+    <li data-fr>Observer le suivi temps réel jusqu'à "Livré ! 🎉"</li>
+    <li data-en>Observe real-time tracking up to "Delivered! 🎉"</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Création OM fluide en 3 écrans · Confetti animation · Discount -20% visible et appliqué · Économie affichée en XOF · Récapitulatif avec ligne discount verte · Suivi complet jusqu'à "Livré ! 🎉".</p>
+    <p data-en>Smooth 3-screen OM creation · Confetti animation · -20% discount visible and applied · Savings shown in XOF · Recap with green discount line · Full tracking to "Delivered! 🎉".</p>
+  </div>
+  <div class="otp-note" data-fr>OTP validation numéro : <strong>5678</strong> · OTP paiement : <strong>1234</strong></div>
+  <div class="otp-note" data-en>Phone OTP: <strong>5678</strong> · Payment OTP: <strong>1234</strong></div>
+</div>
+
+<!-- CAS 13 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">13</div>
+    <div>
+      <div class="case-title" data-fr>Publicité post-roll — Fin de lecture, passable immédiatement</div>
+      <div class="case-title" data-en>Post-roll ad — End of playback, immediately skippable</div>
+      <div class="tags"><span class="case-tag">Profil C</span><span class="case-tag red">Pub post-roll</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Profil C — lancer la lecture d'un contenu core et laisser jouer jusqu'à la fin</li>
+    <li data-en>Profile C — start core content and let it play to the end</li>
+    <li data-fr>Lorsque la barre de progression atteint 100%, un post-roll s'affiche</li>
+    <li data-en>When the progress bar reaches 100%, a post-roll appears</li>
+    <li data-fr>Vérifier que le bouton "Ignorer la pub →" est disponible immédiatement</li>
+    <li data-en>Verify the "Skip ad →" button is available immediately</li>
+    <li data-fr>Taper "Ignorer" → retour au player (fin de lecture)</li>
+    <li data-en>Tap "Skip" → return to player (end of playback)</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Post-roll affiché après 100% de progression. Bouton "Ignorer" disponible sans délai. Clic sur la pub ouvre la page tracking.</p>
+    <p data-en>Post-roll shown after 100% progress. "Skip" button available without delay. Clicking ad opens tracking page.</p>
+  </div>
+</div>
+
+<!-- CAS 14 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">14</div>
+    <div>
+      <div class="case-title" data-fr>Absence de publicités — Profil A, B, et partenaires ingérés</div>
+      <div class="case-title" data-en>No ads — Profile A, B, and ingested partners</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag">Profil B</span><span class="case-tag green">Pas de pub</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Passer en Profil A → lire n'importe quel contenu → aucune pub ne doit apparaître</li>
+    <li data-en>Switch to Profile A → play any content → no ads should appear</li>
+    <li data-fr>Passer en Profil B → lire un contenu core accessible → aucune pub</li>
+    <li data-en>Switch to Profile B → play an accessible core content → no ads</li>
+    <li data-fr>Rester en Profil C → lire un contenu FTVgo depuis le catalogue → aucune pub</li>
+    <li data-en>Stay on Profile C → play FTVgo content from catalogue → no ads</li>
+    <li data-fr>Profil C → lire un contenu VeedzTV → aucune pub</li>
+    <li data-en>Profile C → play VeedzTV content → no ads</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Aucune publicité pour Profil A ou B, quelle que soit la source. Aucune pub sur contenu FTVgo ou VeedzTV même en Profil C. Pub uniquement Profil C + contenu core Max it TV.</p>
+    <p data-en>No ads for Profile A or B regardless of source. No ads on FTVgo or VeedzTV content even in Profile C. Ads only for Profile C + core Max it TV content.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 5 : PARTENAIRES INGÉRÉS
+══════════════════════════════════════ -->
+<div class="section-title">
+  <span data-fr>05 · Partenaires ingérés — FTVgo & VeedzTV</span>
+  <span data-en>05 · Ingested partners — FTVgo & VeedzTV</span>
+</div>
+
+<!-- CAS 15 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">15</div>
+    <div>
+      <div class="case-title" data-fr>FTVgo — Catalogue et lecture directe depuis le rail</div>
+      <div class="case-title" data-en>FTVgo — Catalogue and direct play from rail</div>
+      <div class="tags"><span class="case-tag">FTVgo</span><span class="case-tag blue">Lecture directe</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Profil A ou B — sur l'accueil, scroller jusqu'au rail FTVgo</li>
+    <li data-en>Profile A or B — on home, scroll to the FTVgo rail</li>
+    <li data-fr>Taper une carte FTVgo → le player s'ouvre directement (pas d'écran de détail)</li>
+    <li data-en>Tap an FTVgo card → player opens directly (no detail screen)</li>
+    <li data-fr>Taper ← dans le player → retour au catalogue FTVgo (pas à l'accueil)</li>
+    <li data-en>Tap ← in the player → back to FTVgo catalogue (not to home)</li>
+    <li data-fr>Dans le catalogue FTVgo, taper une autre carte → player direct</li>
+    <li data-en>In the FTVgo catalogue, tap another card → direct player</li>
+    <li data-fr>Taper ← dans le catalogue FTVgo → retour à l'accueil</li>
+    <li data-en>Tap ← in the FTVgo catalogue → back to home</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Cartes FTVgo → player direct sans détail. Retour depuis player → catalogue FTVgo. Retour depuis catalogue → accueil. Aucune pub sur contenu FTVgo.</p>
+    <p data-en>FTVgo cards → direct player without detail. Back from player → FTVgo catalogue. Back from catalogue → home. No ads on FTVgo content.</p>
+  </div>
+</div>
+
+<!-- CAS 16 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">16</div>
+    <div>
+      <div class="case-title" data-fr>FTVgo — Alerte data : bannière faible + superposition épuisé</div>
+      <div class="case-title" data-en>FTVgo — Data alert: low banner + depleted overlay</div>
+      <div class="tags"><span class="case-tag">FTVgo</span><span class="case-tag red">Alerte data</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Profil A ou B — accéder à un player FTVgo via le catalogue</li>
+    <li data-en>Profile A or B — access an FTVgo player via the catalogue</li>
+    <li data-fr>Dans le panneau démo (sous le téléphone), taper ⚠️ "Data faible"</li>
+    <li data-en>In the demo panel (below the phone), tap ⚠️ "Low data"</li>
+    <li data-fr>Observer la bannière orange en bas du player</li>
+    <li data-en>Observe the orange banner at the bottom of the player</li>
+    <li data-fr>Taper 📵 "Data épuisée" → superposition bleue avec options de recharge</li>
+    <li data-en>Tap 📵 "Data depleted" → blue overlay with recharge options</li>
+    <li data-fr>Taper "Recharger ma data" → fiche de recharge FTVgo avec 3 packs</li>
+    <li data-en>Tap "Recharge my data" → FTVgo recharge sheet with 3 packs</li>
+    <li data-fr>Sélectionner un pack → payer par DCB ou OM (OTP 1234) → confirmation</li>
+    <li data-en>Select a pack → pay by DCB or OM (OTP 1234) → confirmation</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Bannière ⚠️ non bloquante. Superposition 📵 bloque la lecture. Fiche recharge : 3 packs (100 Mo, 500 Mo, 1 Go). Confirmation avec nouveau solde data.</p>
+    <p data-en>⚠️ banner non-blocking. 📵 overlay blocks playback. Recharge sheet: 3 packs (100 MB, 500 MB, 1 GB). Confirmation with new data balance.</p>
+  </div>
+  <div class="attention">
+    <div class="attention-label">⚠ <span data-fr>Comment déclencher</span><span data-en>How to trigger</span></div>
+    <p data-fr>Le panneau démo ⚠️ 📵 est visible sous le téléphone dans l'interface principale, uniquement quand un player FTVgo est actif.</p>
+    <p data-en>The demo panel ⚠️ 📵 is visible below the phone in the main interface, only when an FTVgo player is active.</p>
+  </div>
+</div>
+
+<!-- CAS 17 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">17</div>
+    <div>
+      <div class="case-title" data-fr>VeedzTV — Nouveau partenaire, catalogue et lecture</div>
+      <div class="case-title" data-en>VeedzTV — New partner, catalogue and playback</div>
+      <div class="tags"><span class="case-tag">VeedzTV</span><span class="case-tag green">7e partenaire</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Profil A — sur l'accueil, localiser le rail VeedzTV</li>
+    <li data-en>Profile A — on home, locate the VeedzTV rail</li>
+    <li data-fr>Taper une carte VeedzTV → player s'ouvre directement</li>
+    <li data-en>Tap a VeedzTV card → player opens directly</li>
+    <li data-fr>Taper ← → retour au catalogue VeedzTV</li>
+    <li data-en>Tap ← → back to VeedzTV catalogue</li>
+    <li data-fr>Dans le catalogue : vérifier les 4 contenus (Veedz Live, Africa Top Music, Comedy Night, Fashion Week Abidjan)</li>
+    <li data-en>In the catalogue: verify 4 contents (Veedz Live, Africa Top Music, Comedy Night, Fashion Week Abidjan)</li>
+    <li data-fr>Profil B → taper VeedzTV → accès direct (inclus dans le Pack Essentiel)</li>
+    <li data-en>Profile B → tap VeedzTV → direct access (included in Essential Pack)</li>
+    <li data-fr>Profil C → taper VeedzTV → paywall VeedzTV</li>
+    <li data-en>Profile C → tap VeedzTV → VeedzTV paywall</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Rail VeedzTV visible sur l'accueil. 4 contenus dans le catalogue. Lecture directe depuis rail et catalogue. Aucune pub sur VeedzTV. Paywall pour Profil C.</p>
+    <p data-en>VeedzTV rail visible on home. 4 contents in catalogue. Direct play from rail and catalogue. No ads on VeedzTV. Paywall for Profile C.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 6 : NAVIGATION
+══════════════════════════════════════ -->
+<div class="section-title">
+  <span data-fr>06 · Navigation avancée</span>
+  <span data-en>06 · Advanced navigation</span>
+</div>
+
+<!-- CAS 18 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">18</div>
+    <div>
+      <div class="case-title" data-fr>Onglet Chaînes — 5 groupes, lecture directe</div>
+      <div class="case-title" data-en>Channels tab — 5 groups, direct playback</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag blue">Bottom nav</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Sur l'accueil, taper l'onglet "Chaînes" dans la barre de navigation bas</li>
+    <li data-en>On home, tap the "Channels" tab in the bottom nav bar</li>
+    <li data-fr>Vérifier les 5 sections : Live, Religieux, Novelas, Kids, Sport</li>
+    <li data-en>Verify the 5 sections: Live, Religious, Novelas, Kids, Sport</li>
+    <li data-fr>Taper une chaîne → lecture directe dans le player</li>
+    <li data-en>Tap a channel → direct playback in the player</li>
+    <li data-fr>Taper ← dans le player → retour à l'écran Chaînes</li>
+    <li data-en>Tap ← in the player → back to Channels screen</li>
+    <li data-fr>Taper ← sur l'écran Chaînes → retour à l'accueil</li>
+    <li data-en>Tap ← on Channels screen → back to home</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Écran Chaînes avec 5 groupes et 16+ chaînes. Lecture directe sans écran de détail. Navigation retour correcte depuis player → Chaînes → Accueil.</p>
+    <p data-en>Channels screen with 5 groups and 16+ channels. Direct play without detail screen. Correct back navigation: player → Channels → Home.</p>
+  </div>
+</div>
+
+<!-- CAS 19 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">19</div>
+    <div>
+      <div class="case-title" data-fr>Onglet Recherche — Filtrage temps réel</div>
+      <div class="case-title" data-en>Search tab — Real-time filtering</div>
+      <div class="tags"><span class="case-tag">Tous profils</span><span class="case-tag blue">Bottom nav</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Sur l'accueil, taper l'onglet "Recherche" dans la barre de navigation bas</li>
+    <li data-en>On home, tap the "Search" tab in the bottom nav bar</li>
+    <li data-fr>Observer les tendances (pills) et la grille de genres</li>
+    <li data-en>Observe trending pills and the genre grid</li>
+    <li data-fr>Saisir au moins 2 caractères dans la barre de recherche (ex : "Ar")</li>
+    <li data-en>Type at least 2 characters in the search bar (e.g. "Ar")</li>
+    <li data-fr>Vérifier l'apparition des résultats filtrés en temps réel</li>
+    <li data-en>Verify filtered results appearing in real time</li>
+    <li data-fr>Taper un résultat → écran de détail du contenu</li>
+    <li data-en>Tap a result → content detail screen</li>
+    <li data-fr>Taper une pill tendance (ex : "Action") → filtre automatique sur le genre</li>
+    <li data-en>Tap a trending pill (e.g. "Action") → auto-filter by genre</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Pas de résultats sous 2 caractères. Filtrage actif dès 2+ chars. Pills tendance filtrent par genre. Taper un résultat → écran de détail.</p>
+    <p data-en>No results under 2 characters. Filtering active at 2+ chars. Trending pills filter by genre. Tapping a result → detail screen.</p>
+  </div>
+</div>
+
+<!-- CAS 20 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">20</div>
+    <div>
+      <div class="case-title" data-fr>Shorts feed — Swipe, pubs intercalées, "Voir plus" contextuel</div>
+      <div class="case-title" data-en>Shorts feed — Swipe, interspersed ads, contextual "Watch more"</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag red">Pub Shorts</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Taper l'onglet Shorts dans la barre de navigation bas</li>
+    <li data-en>Tap the Shorts tab in the bottom nav bar</li>
+    <li data-fr>Swiper vers le haut pour avancer dans le feed (ou bouton ↓)</li>
+    <li data-en>Swipe up to advance in the feed (or ↓ button)</li>
+    <li data-fr>Après 3 shorts, une publicité plein écran verticale s'affiche (Profil C uniquement)</li>
+    <li data-en>After 3 shorts, a full-screen vertical ad appears (Profile C only)</li>
+    <li data-fr>Sur un short "Trailer · Partenaire externe" : taper "Voir plus →" → enabler partenaire si abonné</li>
+    <li data-en>On a "Trailer · External partner" short: tap "Watch more →" → partner enabler if subscribed</li>
+    <li data-fr>Sur un short "Extrait · Offre core" : taper "Voir plus →" → player ou detail selon abonnement</li>
+    <li data-en>On an "Extrait · Core offer" short: tap "Watch more →" → player or detail based on subscription</li>
+    <li data-fr>Sur un short "Short · Partenaire externe" non abonné : "Voir plus →" → paywall du partenaire</li>
+    <li data-en>On a "Short · External partner" short, not subscribed: "Watch more →" → partner paywall</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Swipe fluide. Pubs intercalées toutes les 3 shorts (Profil C). Pub passable après 5s. "Voir plus" adapté selon type et abonnement. Dots de progression visibles en haut.</p>
+    <p data-en>Smooth swipe. Ads every 3 shorts (Profile C). Ad skippable after 5s. "Watch more" adapted by type and subscription. Progress dots visible at top.</p>
+  </div>
+  <div class="attention">
+    <div class="attention-label">⚠ <span data-fr>Pubs dans les Shorts</span><span data-en>Ads in Shorts</span></div>
+    <p data-fr>Les publicités dans les Shorts sont verticales (format 9:16) et apparaissent uniquement pour le Profil C. Elles sont passables après 5s.</p>
+    <p data-en>Ads in Shorts are vertical (9:16 format) and appear only for Profile C. They are skippable after 5s.</p>
+  </div>
+</div>
+
+<!-- CAS 21 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">21</div>
+    <div>
+      <div class="case-title" data-fr>PPV — Achat d'un film à l'unité (sans abonnement core)</div>
+      <div class="case-title" data-en>PPV — Single-film purchase (no core subscription)</div>
+      <div class="tags"><span class="case-tag">Profil C</span><span class="case-tag orange">PPV</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Profil C sélectionné (aucun abonnement)</li>
+    <li data-en>Profile C selected (no subscription)</li>
+    <li data-fr>Sur l'accueil, repérer une carte de film avec le badge orange "Dès 500 XOF"</li>
+    <li data-en>On home, spot a film card with the orange badge "From 500 XOF"</li>
+    <li data-fr>Taper la carte → écran Détail s'ouvre · Vérifier la mention "À partir de 500 XOF · ou abonnez-vous"</li>
+    <li data-en>Tap the card → Detail screen opens · Verify the hint "From 500 XOF · or subscribe"</li>
+    <li data-fr>Taper "Regarder" → Paywall s'ouvre sur l'onglet "Ce contenu" (sélectionné par défaut)</li>
+    <li data-en>Tap "Watch" → Paywall opens on "This content" tab (selected by default)</li>
+    <li data-fr>Vérifier : vignette du film, titre, 2 options radio ("Accès au contenu" 500 XOF / "Accès + data" 750 XOF)</li>
+    <li data-en>Verify: film thumbnail, title, 2 radio options ("Content access" 500 XOF / "Access + data" 750 XOF)</li>
+    <li data-fr>Sélectionner une option, choisir un mode de paiement, taper "Acheter · 500 XOF"</li>
+    <li data-en>Select an option, choose a payment method, tap "Buy · 500 XOF"</li>
+    <li data-fr>Écran de confirmation : titre + "acheté", expiry à J+48h, bouton "Regarder maintenant"</li>
+    <li data-en>Confirmation screen: title + "purchased", J+48h expiry, "Watch now" button</li>
+    <li data-fr>Taper "Regarder maintenant" → player s'ouvre directement</li>
+    <li data-en>Tap "Watch now" → player opens directly</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Badge PPV visible sur les cartes core verrouillées. Hint de prix sur l'écran Détail. Onglet "Ce contenu" actif par défaut. Prix radio corrects (Film : 500 / 750 XOF). Confirmation affiche titre acheté + date d'expiry. Player s'ouvre sans passer par le flux abonnement.</p>
+    <p data-en>PPV badge visible on locked core cards. Price hint on Detail screen. "This content" tab active by default. Correct radio prices (Film: 500 / 750 XOF). Confirmation shows purchased title + expiry date. Player opens without going through subscription flow.</p>
+  </div>
+  <div class="attention">
+    <div class="attention-label">⚠ <span data-fr>PPV uniquement sur contenus natifs core</span><span data-en>PPV only on native core content</span></div>
+    <p data-fr>Le modèle PPV s'applique uniquement aux Films et Séries du catalogue natif (partenaire "core"). Il n'apparaît pas pour les contenus partenaires (Netflix, Canal+, etc.) ni pour les utilisateurs déjà abonnés au core.</p>
+    <p data-en>The PPV model applies only to Films and Series from the native catalogue (partner "core"). It does not appear for partner content (Netflix, Canal+, etc.) or for users already subscribed to core.</p>
+  </div>
+</div>
+
+<!-- CAS 22 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">22</div>
+    <div>
+      <div class="case-title" data-fr>PPV vs Abonnement — Bascule entre les onglets du paywall</div>
+      <div class="case-title" data-en>PPV vs Subscription — Switching between paywall tabs</div>
+      <div class="tags"><span class="case-tag">Profil C</span><span class="case-tag orange">PPV</span><span class="case-tag">Paywall</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Profil C · Ouvrir le paywall sur un film natif (via carte ou bouton Regarder)</li>
+    <li data-en>Profile C · Open paywall on a native film (via card or Watch button)</li>
+    <li data-fr>Vérifier : 2 onglets visibles en haut — "Ce contenu" (orange, sélectionné) et "Abonnement"</li>
+    <li data-en>Verify: 2 tabs visible at top — "This content" (orange, selected) and "Subscription"</li>
+    <li data-fr>Sur l'onglet "Ce contenu" : basculer entre "sans data" (500 XOF) et "avec data" (750 XOF) → prix CTA se met à jour</li>
+    <li data-en>On "This content" tab: toggle between "sans data" (500 XOF) and "avec data" (750 XOF) → CTA price updates</li>
+    <li data-fr>Taper l'onglet "Abonnement" → affiche le flux abonnement standard (durée, data, prix mensuel)</li>
+    <li data-en>Tap "Subscription" tab → shows standard subscription flow (duration, data, monthly price)</li>
+    <li data-fr>Retourner sur "Ce contenu" → offre PPV restaurée (sélection radio conservée)</li>
+    <li data-en>Go back to "This content" → PPV offer restored (radio selection preserved)</li>
+    <li data-fr>Répéter sur une Série : vérifier les tarifs épisode (200/300 XOF) et saison (1 200/1 600 XOF)</li>
+    <li data-en>Repeat on a Series: verify episode prices (200/300 XOF) and season prices (1 200/1 600 XOF)</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>Les 2 onglets s'affichent uniquement pour les contenus natifs core sans abonnement actif. La bascule est immédiate et conserve l'état de chaque onglet. Les prix sont corrects selon le type (film/épisode/saison) et l'option data sélectionnée. L'onglet "Abonnement" affiche le flux existant inchangé.</p>
+    <p data-en>Both tabs appear only for native core content without active subscription. Switching is immediate and preserves each tab's state. Prices are correct based on type (film/episode/season) and selected data option. "Subscription" tab shows existing flow unchanged.</p>
+  </div>
+</div>
+
+<!-- CAS 23 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">23</div>
+    <div>
+      <div class="case-title" data-fr>Catalogue FTVgo — Navigation par rails</div>
+      <div class="case-title" data-en>FTVgo Catalogue — Rail navigation</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag orange">FTVgo</span><span class="case-tag">3 min</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Profil A · Depuis la home, taper "Voir tout" sur le rail FTVgo <strong>ou</strong> "En plus" → "Ouvrir" sur FTVgo</li>
+    <li data-en>Profile A · From home, tap "See all" on the FTVgo rail <strong>or</strong> "More" → "Open" on FTVgo</li>
+    <li data-fr>Vérifier le header orange avec badge "● Actif" en haut à droite</li>
+    <li data-en>Verify the orange header with "● Active" badge on the top right</li>
+    <li data-fr>Vérifier la bannière héro avec le Journal 20h en direct + bouton ▶</li>
+    <li data-en>Verify the hero banner showing the live Journal 20h + ▶ button</li>
+    <li data-fr>Faire défiler les rails : "En ce moment" (live), "Documentaires", "Séries", "Jeunesse"</li>
+    <li data-en>Scroll through rails: "Right now" (live), "Documentaries", "Series", "Kids"</li>
+    <li data-fr>Taper une vignette → bottom sheet s'ouvre avec le programme + bouton de lecture</li>
+    <li data-en>Tap a thumbnail → bottom sheet opens with programme details + play button</li>
+    <li data-fr>Taper "▶ Regarder" → player s'ouvre · Retour → catalogue FTVgo (pas la home)</li>
+    <li data-en>Tap "▶ Watch" → player opens · Back → FTVgo catalogue (not home)</li>
+    <li data-fr>Fermer la sheet (tap hors) → vignette déselectionnée</li>
+    <li data-en>Close sheet (tap outside) → thumbnail deselected</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>4 rails de contenu FTVgo organisés par section. La sheet de détail s'ouvre et ferme correctement. Le player se lance depuis le catalogue. Le bouton de retour dans le player revient bien au catalogue FTVgo.</p>
+    <p data-en>4 content rails organized by section. Detail sheet opens and closes correctly. Player launches from catalogue. Back button in player returns to FTVgo catalogue.</p>
+  </div>
+</div>
+
+<!-- CAS 24 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">24</div>
+    <div>
+      <div class="case-title" data-fr>Parcours app non installée — Partenaire externe</div>
+      <div class="case-title" data-en>App not installed — External partner flow</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag orange">Partenaire externe</span><span class="case-tag">5 min</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Dans le panneau ⚙ Demo, activer le toggle "Netflix — App non installée"</li>
+    <li data-en>In the ⚙ Demo panel, enable the "Netflix — App not installed" toggle</li>
+    <li data-fr>Depuis la home ou "En plus", ouvrir la page Netflix (si déjà souscrit, taper "Ouvrir")</li>
+    <li data-en>From home or "More", open the Netflix page (if already subscribed, tap "Open")</li>
+    <li data-fr>Passer par Paywall → Paiement → Liaison compte → Enabler → taper "Continuer"</li>
+    <li data-en>Go through Paywall → Payment → Account link → Enabler → tap "Continue"</li>
+    <li data-fr>Vérifier : écran "App non installée" avec le nom du partenaire en couleur</li>
+    <li data-en>Verify: "App not installed" screen with partner name in brand color</li>
+    <li data-fr>Tester option 1 — "Télécharger l'app" : spinner + message d'installation + bouton retour</li>
+    <li data-en>Test option 1 — "Download app": spinner + install message + back button</li>
+    <li data-fr>Revenir (←) · Tester option 2 — "Regarder sur le web" : confirmation navigateur + badge "Actif"</li>
+    <li data-en>Go back (←) · Test option 2 — "Watch on web": browser confirmation + "Active" badge</li>
+    <li data-fr>Revenir · Tester option 3 — "Recevoir un lien par email" : toast "Email envoyé ✓"</li>
+    <li data-en>Go back · Test option 3 — "Get a link by email": "Email sent ✓" toast</li>
+    <li data-fr>Taper "← Retour à Max it TV" : retour sur la home</li>
+    <li data-en>Tap "← Back to Max it TV": returns to home</li>
+    <li data-fr>Répéter avec un autre partenaire (Canal+, Paramount+, ReelShort)</li>
+    <li data-en>Repeat with another partner (Canal+, Paramount+, ReelShort)</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>L'écran "App non installée" apparaît uniquement si le toggle est activé. Les 3 options sont claires et fonctionnelles. Les couleurs du partenaire s'appliquent. Le retour vers Max it TV fonctionne depuis chaque sous-écran.</p>
+    <p data-en>"App not installed" screen appears only when toggle is enabled. All 3 options are clear and functional. Partner brand colors apply correctly. Return to Max it TV works from every sub-screen.</p>
+  </div>
+</div>
+
+<!-- CAS 25 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">25</div>
+    <div>
+      <div class="case-title" data-fr>Max it Mood — Sélection d'humeur + impact sur la home</div>
+      <div class="case-title" data-en>Max it Mood — Mood selection + home impact</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag blue">Mood</span><span class="case-tag">2 min</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Depuis l'écran de démarrage, choisir la langue (FR ou EN)</li>
+    <li data-en>From the launch screen, select a language (FR or EN)</li>
+    <li data-fr>L'écran Mood apparaît automatiquement — choisir un mood (ex. Action ⚡)</li>
+    <li data-en>The Mood screen appears automatically — select a mood (e.g. Action ⚡)</li>
+    <li data-fr>Taper "C'est parti →" — l'emoji du mood doit apparaître à côté du profil sur la home</li>
+    <li data-en>Tap "Let's go →" — the mood emoji should appear next to the profile button on the home screen</li>
+    <li data-fr>Tester "Passer" — revenir à l'écran Mood via le panneau ⚙ Demo et passer sans sélection</li>
+    <li data-en>Test "Skip" — return to the Mood screen via the ⚙ Demo panel and skip without selecting</li>
+    <li data-fr>Dans le panneau ⚙ Demo, utiliser les 5 boutons emoji pour changer le mood en cours de session</li>
+    <li data-en>In the ⚙ Demo panel, use the 5 emoji buttons to change the mood during the session</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>L'écran Mood s'affiche une fois par session après la sélection de langue. L'emoji du mood sélectionné s'affiche dans le header de la home. "Passer" fonctionne sans mood sélectionné. Les boutons demo changent l'emoji en temps réel.</p>
+    <p data-en>The Mood screen appears once per session after language selection. The selected mood emoji displays in the home header. "Skip" works with no mood selected. Demo buttons update the emoji in real time.</p>
+  </div>
+</div>
+
+<!-- CAS 26 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">26</div>
+    <div>
+      <div class="case-title" data-fr>Commande restaurant — Parcours complet 6 étapes</div>
+      <div class="case-title" data-en>Restaurant order — Full 6-step flow</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag orange">Commande</span><span class="case-tag">6 min</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Lancer un contenu depuis la home (entrer dans le player)</li>
+    <li data-en>Start a content from the home screen (enter the player)</li>
+    <li data-fr>Attendre 10 secondes : une bannière "faim" non bloquante apparaît en bas du player</li>
+    <li data-en>Wait 10 seconds: a non-blocking hunger banner appears at the bottom of the player</li>
+    <li data-fr>Ou utiliser "🍕 Déclencher bannière faim" dans le panneau ⚙ Demo</li>
+    <li data-en>Or use "🍕 Trigger hunger banner" in the ⚙ Demo panel</li>
+    <li data-fr>Taper "Oui 😋" — la fiche commande (CommandeSheet) s'ouvre en bottom sheet</li>
+    <li data-en>Tap "Oui 😋" — the order sheet (CommandeSheet) opens as a bottom sheet</li>
+    <li data-fr>Étape 1 : sélectionner un restaurant parmi les 5 proposés</li>
+    <li data-en>Step 1: select a restaurant from the 5 options</li>
+    <li data-fr>Étape 2 : parcourir le menu · ajouter des articles au panier · vérifier le total</li>
+    <li data-en>Step 2: browse the menu · add items to cart · verify the total</li>
+    <li data-fr>Étape 3 : cross-sell — ajouter ou ignorer les suggestions complémentaires</li>
+    <li data-en>Step 3: cross-sell — add or skip the complementary suggestions</li>
+    <li data-fr>Étape 4 : saisir une adresse de livraison</li>
+    <li data-en>Step 4: enter a delivery address</li>
+    <li data-fr>Étape 5 : choisir DCB ou Orange Money · tester OTP 1234 (et un code erroné)</li>
+    <li data-en>Step 5: choose DCB or Orange Money · test OTP 1234 (and a wrong code)</li>
+    <li data-fr>Étape 6 : suivi de livraison — observer les 4 étapes et l'animation scooter</li>
+    <li data-en>Step 6: delivery tracking — observe the 4 steps and the scooter animation</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>La bannière faim est contextuelle selon le mood. Le sheet s'ouvre sans bloquer la lecture. Les 6 étapes s'enchaînent correctement. L'OTP 1234 valide le paiement ; un code erroné affiche une erreur. L'animation de suivi progresse automatiquement jusqu'à "Livré! 🎉".</p>
+    <p data-en>The hunger banner text is contextual based on mood. The sheet opens without blocking playback. All 6 steps flow correctly. OTP 1234 validates payment; a wrong code shows an error. The tracking animation progresses automatically to "Delivered! 🎉".</p>
+  </div>
+  <div class="attention">
+    <div class="attention-label">⚠ <span data-fr>Note</span><span data-en>Note</span></div>
+    <p data-fr>Code OTP : <strong>1234</strong> · La bannière "Non merci" ferme définitivement pour la session.</p>
+    <p data-en>OTP code: <strong>1234</strong> · The "No thanks" banner dismisses permanently for the session.</p>
+  </div>
+</div>
+
+<!-- CAS 27 -->
+<div class="case">
+  <div class="case-header">
+    <div class="case-num">27</div>
+    <div>
+      <div class="case-title" data-fr>Max it After — Suggestions en fin de contenu + post-livraison</div>
+      <div class="case-title" data-en>Max it After — End-of-content suggestions + post-delivery push</div>
+      <div class="tags"><span class="case-tag">Profil A</span><span class="case-tag blue">After</span><span class="case-tag">4 min</span></div>
+    </div>
+  </div>
+  <ul class="steps">
+    <li data-fr>Dans le player, avancer la barre de progression jusqu'à ~95% (ou utiliser "🌙 Déclencher Max it After")</li>
+    <li data-en>In the player, advance progress to ~95% (or use "🌙 Trigger Max it After")</li>
+    <li data-fr>Une AfterCard flottante apparaît en bas du player avec 3 suggestions en scroll horizontal</li>
+    <li data-en>A floating AfterCard appears at the bottom of the player with 3 horizontal-scroll suggestions</li>
+    <li data-fr>Vérifier : suggestion 1 = contenu suivant (▶ Regarder) · suggestion 2 = Max it Music · suggestion 3 = Pack bundle selon le mood actif</li>
+    <li data-en>Verify: suggestion 1 = next content (▶ Watch) · suggestion 2 = Max it Music · suggestion 3 = Bundle pack based on active mood</li>
+    <li data-fr>Changer le mood dans le panneau ⚙ Demo et retrigger l'AfterCard : le pack bundle doit changer</li>
+    <li data-en>Change mood in the ⚙ Demo panel and re-trigger AfterCard: the bundle pack should change</li>
+    <li data-fr>Tester la push post-livraison : compléter une commande jusqu'au statut "Livré! 🎉" · attendre 15 secondes</li>
+    <li data-en>Test post-delivery push: complete an order to "Delivered! 🎉" status · wait 15 seconds</li>
+    <li data-fr>Ou utiliser "🎁 Déclencher push post-livraison" dans le panneau ⚙ Demo</li>
+    <li data-en>Or use "🎁 Trigger post-delivery push" in the ⚙ Demo panel</li>
+    <li data-fr>Un banner contextuel s'affiche avec une offre selon le mood · "Commander" rouvre la CommandeSheet</li>
+    <li data-en>A contextual banner appears with a mood-based offer · "Order" reopens the CommandeSheet</li>
+  </ul>
+  <div class="expected">
+    <div class="expected-label">✓ <span data-fr>Résultat attendu</span><span data-en>Expected result</span></div>
+    <p data-fr>L'AfterCard apparaît automatiquement à 95% de progression et via le déclencheur demo. Le pack bundle varie selon le mood (Pack supporter / Pack soirée ciné / Pack comédie). La push post-livraison est contextuelle et "Commander" relance le parcours de commande.</p>
+    <p data-en>AfterCard appears automatically at 95% progress and via demo trigger. The bundle pack varies by mood (Supporter pack / Cinema night pack / Comedy pack). The post-delivery push is contextual and "Order" restarts the order flow.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     TABLEAU DE RÉSULTATS
+══════════════════════════════════════ -->
+<div class="section-title" style="margin-top:48px">
+  <span data-fr>Tableau de résultats</span>
+  <span data-en>Results table</span>
+</div>
+
+<table class="results-table">
+  <thead>
+    <tr>
+      <th style="width:36px">#</th>
+      <th data-fr>Cas de test</th>
+      <th data-en style="display:none">Test case</th>
+      <th>✓</th>
+      <th>✗</th>
+      <th>~</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="num">1</td><td data-fr>Profil A — Accès complet</td><td data-en>Profile A — Full access</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">2</td><td data-fr>Profil B — Accès partiel</td><td data-en>Profile B — Partial access</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">3</td><td data-fr>Profil C — Upsell + pré-roll</td><td data-en>Profile C — Upsell + pre-roll</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">4</td><td data-fr>Souscription standard</td><td data-en>Standard subscription</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">5</td><td data-fr>Souscription Netflix 3 étapes</td><td data-en>Netflix 3-step subscription</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">6</td><td data-fr>ReelShort — Coins vs All-access</td><td data-en>ReelShort — Coins vs All-access</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">7</td><td data-fr>Upsell bundle — Total temps réel</td><td data-en>Upsell bundle — Real-time total</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">8</td><td data-fr>DCB vs Orange Money + OTP</td><td data-en>DCB vs Orange Money + OTP</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">9</td><td data-fr>Player horizontal — Pause/lecture</td><td data-en>Horizontal player — Pause/play</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">10</td><td data-fr>Player vertical NWTV 9:16</td><td data-en>NWTV vertical player 9:16</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">11</td><td data-fr>Pub pré-roll 15s, passable après 5s</td><td data-en>Pre-roll 15s, skippable after 5s</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">12</td><td data-fr>Pub mid-roll à 50%, non passable</td><td data-en>Mid-roll at 50%, non-skippable</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">13</td><td data-fr>Pub post-roll, passable immédiatement</td><td data-en>Post-roll, immediately skippable</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">14</td><td data-fr>Absence de pub — Profil A/B + partenaires</td><td data-en>No ads — Profile A/B + partners</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">15</td><td data-fr>FTVgo — Lecture directe + retour catalogue</td><td data-en>FTVgo — Direct play + catalogue back</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">16</td><td data-fr>FTVgo — Alerte data bannière + recharge</td><td data-en>FTVgo — Data alert banner + recharge</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">17</td><td data-fr>VeedzTV — Catalogue + lecture directe</td><td data-en>VeedzTV — Catalogue + direct play</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">18</td><td data-fr>Onglet Chaînes — 5 groupes</td><td data-en>Channels tab — 5 groups</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">19</td><td data-fr>Onglet Recherche — Filtrage temps réel</td><td data-en>Search tab — Real-time filtering</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">20</td><td data-fr>Shorts feed — Swipe + pubs + Voir plus</td><td data-en>Shorts feed — Swipe + ads + Watch more</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">21</td><td data-fr>PPV — Achat film à l'unité</td><td data-en>PPV — Single-film purchase</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">22</td><td data-fr>PPV vs Abonnement — Bascule onglets paywall</td><td data-en>PPV vs Subscription — Paywall tab switch</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">23</td><td data-fr>Catalogue FTVgo — Rails + sheet de détail</td><td data-en>FTVgo catalogue — Rails + detail sheet</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">24</td><td data-fr>Parcours app non installée — 3 options</td><td data-en>App not installed — 3 options</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">25</td><td data-fr>Max it Mood — Sélection + impact home</td><td data-en>Max it Mood — Selection + home impact</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">26</td><td data-fr>Commande restaurant — Parcours 6 étapes</td><td data-en>Restaurant order — 6-step flow</td><td></td><td></td><td></td></tr>
+    <tr><td class="num">27</td><td data-fr>Max it After — Suggestions + post-livraison</td><td data-en>Max it After — Suggestions + post-delivery</td><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<div style="margin-top:12px;font-size:12px;color:#aaa">
+  <span data-fr>✓ Conforme &nbsp;·&nbsp; ✗ Échoué &nbsp;·&nbsp; ~ Partiel</span>
+  <span data-en>✓ Pass &nbsp;·&nbsp; ✗ Fail &nbsp;·&nbsp; ~ Partial</span>
+</div>
+
+<footer>
+  <span>Max it TV — Demo · <span data-fr>Guide version démo · 27 cas</span><span data-en>Demo guide · 27 cases</span></span>
+  <span style="color:#FF6B00;font-weight:600">maxit-tv-v2.vercel.app</span>
+</footer>
+
+<script>
+function setLang(l) {
+  document.body.className = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick*="${l}"]`).classList.add('active');
+  document.documentElement.lang = l;
+  // Update results table header
+  const thFr = document.querySelector('.results-table th[data-fr]');
+  const thEn = document.querySelector('.results-table th[data-en]');
+  if(l === 'en') {
+    if(thFr) thFr.style.display = 'none';
+    if(thEn) thEn.style.display = '';
+  } else {
+    if(thFr) thFr.style.display = '';
+    if(thEn) thEn.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>

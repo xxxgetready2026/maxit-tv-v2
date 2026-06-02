@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/guide", "dest": "/guide.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}
